@@ -38,7 +38,6 @@ cairo: 2.6.3 (https://crates.io/crates/cairo-lang-compiler/2.6.3)
 sierra: 1.5.0
 
 
-
 ### LINUX BASICS
 
 pwd - location 
@@ -47,3 +46,12 @@ cd .. - back
 
 
 cd mnt - work with windows 
+
+
+### Create projects
+
+scarb new project_name
+
+scarb build
+
+scarb cairo-run
