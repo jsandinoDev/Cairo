@@ -24,15 +24,15 @@ In Cairo, the result of xy
 ### Integer Types
 his type declaration indicates the number of bits the programmer can use to store the integer.
 
-| Length  | Unsigned |   |   |   |
-|---------|----------|---|---|---|
-| 8-bit   | u8       |   |   |   |
-| 16-bit  | u16      |   |   |   |
-| 32-bit  | u32      |   |   |   |
-| 64-bit  | u64      |   |   |   |
-| 128-bit | u128     |   |   |   |
-| 256-bit | u256     |   |   |   |
-| 32-bit  | usize    |   |   |   |
+| Length  | Unsigned |
+|---------|----------|
+| 8-bit   | u8       |
+| 16-bit  | u16      |
+| 32-bit  | u32      |
+| 64-bit  | u64      |
+| 128-bit | u128     |
+| 256-bit | u256     |
+| 32-bit  | usize    |
 
 ### Numeric Operations
 ``` 
