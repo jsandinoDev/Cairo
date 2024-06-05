@@ -167,3 +167,52 @@ pub impl U128Two = one_based::TwoImpl<u128>;
 
 ### Negative Impls
 
+Note: This is still an experimental feature and can only be used if experimental-features = ["negative_impls"] is enabled in your Scarb.toml file, under the [package] section.
+
+
+are a mechanism that allows you to express that a type does not implement a certain trait when defining the implementation of a trait over a generic type. Negative impls enable you to write implementations that are applicable only when another implementation does not exist in the current scope.
+
+
+For example, let's say we have a trait Producer and a trait Consumer, and we want to define a generic behavior where all types implement the Consumer trait by default. However, we want to ensure that no type can be both a Consumer and a Producer. We can use negative impls to express this restriction.
+
+```
+#[derive(Drop)]
+struct ProducerType {}
+
+#[derive(Drop, Debug)]
+struct AnotherType {}
+
+#[derive(Drop, Debug)]
+struct AThirdType {}
+
+trait Producer<T> {
+    fn produce(self: T) -> u32;
+}
+
+trait Consumer<T> {
+    fn consume(self: T, input: u32);
+}
+
+impl ProducerImpl of Producer<ProducerType> {
+    fn produce(self: ProducerType) -> u32 {
+        42
+    }
+}
+
+impl TConsumerImpl<T, +core::fmt::Debug<T>, +Drop<T>, -Producer<T>> of Consumer<T> {
+    fn consume(self: T, input: u32) {
+        println!("{:?} consumed value: {}", self, input);
+    }
+}
+
+fn main() {
+    let producer = ProducerType {};
+    let another_type = AnotherType {};
+    let third_type = AThirdType {};
+    let production = producer.produce();
+
+    // producer.consumer(production); Invalid: ProducerType does not implement Consumer
+    another_type.consume(production);
+    third_type.consume(production);
+}
+```
