@@ -22,6 +22,8 @@ fn main() {
 ## --available-gas
 By setting a value to the --available-gas flag, we can set the maximum amount of gas available to the program. Gas is a unit of measurement that expresses the computation cost of an instruction. 
 
+scarb cairo-run --available-gas=20000000
+
 
 ### Continue
 The continue keyword tells the program to go to the next iteration of the loop and to skip the rest of the code in this iteration. Let's add a continue statement to our loop to skip the println! statement when i is equal to 5.
