@@ -285,7 +285,7 @@ let mut state = State { quit: false, position: Point { x: 0, y: 0 }, color: (0, 
     state.process(Message::Quit);
 ```
 
-
+****
 ## Options 
 
 ```
@@ -322,3 +322,250 @@ enum Option<T> {
         println!("grade is {}", course.unwrap());
     }      
 ```
+
+
+## Arrays 
+
+```
+    let mut arr = ArrayTrait::<u128>::new();
+    let mut a = ArrayTrait::new();
+
+    //add
+    a.append(0);
+
+    //remove
+    a.pop_front().unwrap();
+
+    // size
+    a.len()
+
+    // Empty
+    a.is_empty()
+
+    //at
+    let first = *a.at(0);
+
+    //get function returns an Option<Box<@T>>
+    match a.get(index_to_access) {
+        Option::Some(x) => {
+            *x.unbox() 
+        },
+        Option::None => { panic!("out of bounds") }
+
+```
+
+### Array macro
+
+Replace this
+```
+    let mut arr = ArrayTrait::new();
+    arr.append(1);
+    arr.append(2);
+    arr.append(3);
+    arr.append(4);
+    arr.append(5);
+
+```
+For: 
+```
+    let arr = array![1, 2, 3, 4, 5];
+```
+
+### Array with enums
+
+```
+#[derive(Copy, Drop)]
+enum Data {
+    Integer: u128,
+    Felt: felt252,
+    Tuple: (u32, u32),
+}
+
+fn main() {
+    let mut messages: Array<Data> = array![];
+    messages.append(Data::Integer(100));
+    messages.append(Data::Felt('hello world'));
+    messages.append(Data::Tuple((10, 30)));
+}
+```
+
+### Span
+
+- Span is a struct that represents a snapshot of an Array. 
+
+```
+    array.span();
+```
+
+
+## Structs
+
+
+```
+#[derive(Copy, Drop)]
+//Copy: Allows copying an instance of Package.
+//Drop: Allows defining a custom behavior for when an instance of Package is destroyed.
+struct Package {
+    sender_country: felt252,
+    recipient_country: felt252,
+    weight_in_grams: usize,
+}
+```
+
+
+```
+#[derive(Drop)]
+struct User {
+    active: bool,
+    username: ByteArray,
+    email: ByteArray,
+    sign_in_count: u64,
+}
+
+
+    let mut user1 = User {
+        active: true, username: "someusername123", email: "someone@example.com", sign_in_count: 1
+    };
+
+    user1.email = "anotheremail@example.com";
+
+    // OJO EL ..user1
+    let user2 = User { email: "another@example.com", ..user1 };
+```
+
+
+## Traits
+
+```
+#[derive(Copy, Drop)]
+struct Fish {
+    noise: felt252,
+    distance: u32,
+}
+
+#[derive(Copy, Drop)]
+struct Dog {
+    noise: felt252,
+    distance: u32,
+}
+
+trait AnimalTrait<T> {
+    fn new() -> T;
+    fn make_noise(self: T) -> felt252;
+    fn get_distance(self: T) -> u32;
+}
+
+trait FishTrait {
+    fn swim(ref self: Fish) -> ();
+}
+
+trait DogTrait {
+    fn walk(ref self: Dog) -> ();
+}
+
+impl AnimalFishImpl of AnimalTrait<Fish> {
+    fn new() -> Fish {
+        Fish { noise: 'blub', distance: 0 }
+    }
+    fn make_noise(self: Fish) -> felt252 {
+        self.noise
+    }
+    fn get_distance(self: Fish) -> u32 {
+        self.distance
+    }
+}
+
+impl AnimalDogImpl of AnimalTrait<Dog> {
+    fn new() -> Dog {
+        Dog { noise: 'woof', distance: 0 }
+    }
+    fn make_noise(self: Dog) -> felt252 {
+        self.noise
+    }
+    fn get_distance(self: Dog) -> u32 {
+        self.distance
+    }
+}
+
+// TODO: implement FishTrait for the type Fish
+
+impl FishTraitImpl of FishTrait {
+    fn swim(ref self: Fish) {
+        self.distance += 1;
+    }
+}
+
+
+// TODO: implement DogTrait for the type Dog
+impl DogTraitImpl of DogTrait {
+    fn walk(ref self: Dog) {
+        self.distance += 1;
+    }
+}
+```
+
+
+## Dics
+
+```
+fn main() {
+    let mut balances: Felt252Dict<u64> = Default::default();
+
+    balances.insert('Alex', 100);
+    balances.insert('Maria', 200);
+
+    let alex_balance = balances.get('Alex');
+    let maria_balance = balances.get('Maria');
+}
+
+```
+
+
+Big Example
+
+```
+#[derive(Destruct)]
+struct Team {
+    level: Felt252Dict<usize>,
+    players_count: usize,
+}
+```
+
+```
+#[generate_trait]
+impl TeamImpl of TeamTrait {
+    fn new() -> Team {
+        Team {
+            level: Default::default(),
+            players_count: 0,
+        }
+    }
+
+    fn get_level(ref self: Team, name: felt252) -> usize {
+        self.level.get(name).try_into().unwrap_or(0)
+
+    }
+
+    fn add_player(ref self: Team, name: felt252, level: usize) {
+        self.level.insert(name, level);
+        self.players_count += 1;
+    }
+
+    fn level_up(ref self: Team, name: felt252) {
+        // Intentar obtener el nivel actual del jugador
+        let current_level = self.level.get(name);
+    
+        // Verificar si el jugador existe comprobando si el nivel actual no es 0 (nivel predeterminado)
+        if current_level != 0 {
+            // Incrementar el nivel del jugador en el diccionario
+            self.level.insert(name, current_level + 1);
+        }
+    }
+
+    fn players_count(self: @Team) -> usize {
+        *self.players_count
+    }
+}
+```
+
+## Modules
