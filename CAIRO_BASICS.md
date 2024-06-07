@@ -2,7 +2,7 @@
 
 
 
-### Variables
+## Variables
 
 
 ## Datatypes
@@ -72,6 +72,20 @@ fn main() {
 ```
 
 
+```
+//it ready
+fn convert_to_felt(x: u8) -> felt252 {
+    x.into()
+}
+
+//it ready
+fn convert_felt_to_u8(x: felt252) -> u8 {
+    //TODO return x as a u8.
+    x.try_into().unwrap()
+}
+
+```
+
 #### Tuple Type
 
 Tuples have a fixed length
@@ -108,3 +122,74 @@ fn main() {
 #### Unit Type
 
 A unit type is a type which has only one value ()
+
+
+## Functions
+
+```
+fn multiplication(x: u64, y: u64) -> u64 {
+    let res = x * y;
+    res
+}
+```
+
+## If/Else
+
+```
+    if number == 12 {
+         println!("number is 12");
+     }else if number - 2 == 1 {
+         println!("number minus 2 is 1");
+     } else {
+         println!("number not found");
+     }
+```
+
+### Complete Function with if 
+```
+fn calculate_price_of_apples(apples:u32) -> u32{
+    let mut price = 0;
+    if apples <= 40 {
+        price = apples * 3;
+    } else {
+        price = apples * 2;
+    }
+    price
+}
+```
+
+## Loops
+
+Continue  -> tells the program to go to the next iteration
+
+
+Return Valies -> break val;
+
+
+```
+fn test_loop() {
+    let mut counter = 0;
+    loop {
+        if counter == 10 {
+            break ();
+        }
+        if counter == 5 {
+            //TODO return a value from the loop
+            break counter;
+        }
+        counter += 1;
+    };
+}
+```
+
+
+## While
+
+```
+let mut number = 3;
+
+    while number != 0 {
+        println!("{number}!");
+        number -= 1;
+    };
+```
