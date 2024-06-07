@@ -186,10 +186,139 @@ fn test_loop() {
 ## While
 
 ```
-let mut number = 3;
+    let mut number = 3;
 
     while number != 0 {
         println!("{number}!");
         number -= 1;
     };
+```
+
+## Enums
+
+```
+#[derive(Drop, Copy)]
+enum Message { 
+    ChangeColor:(u8, u8, u8),
+    Echo:felt252,
+    Move:Point,
+    Quit,
+}
+
+```
+
+### Trait Implementations for Enums
+
+Needs a process fn()
+
+Can be like:
+```
+    fn process(self: Message) {
+        match self {
+            Message::Quit => { println!("quitting") },
+            Message::Echo(value) => { println!("echoing {}", value) },
+            Message::Move((x, y)) => { println!("moving from {} to {}", x, y) },
+        }
+    }
+```
+
+
+Or 
+
+```
+#[derive(Drop, Copy)]
+struct State {
+    color: (u8, u8, u8),
+    position: Point,
+    quit: bool,
+}
+
+trait StateTrait {
+    fn change_color(ref self: State, new_color: (u8, u8, u8));
+    fn quit(ref self: State);
+    fn echo(ref self: State, s: felt252);
+    fn move_position(ref self: State, p: Point);
+    fn process(ref self: State, message: Message);
+}
+
+impl StateImpl of StateTrait {
+    fn change_color(ref self: State, new_color: (u8, u8, u8)) {
+        let State { color: _, position, quit, } = self;
+        self = State { color: new_color, position: position, quit: quit, };
+    }
+    fn quit(ref self: State) {
+        let State { color, position, quit: _, } = self;
+        self = State { color: color, position: position, quit: true, };
+    }
+
+    fn echo(ref self: State, s: felt252) {
+        println!("{}", s);
+    }
+
+    fn move_position(ref self: State, p: Point) {
+        let State { color, position: _, quit, } = self;
+        self = State { color: color, position: p, quit: quit, };
+    }
+
+    fn process(
+        ref self: State, message: Message
+    ) { // TODO: create a match expression to process the different message variants
+        match message {
+            Message::ChangeColor(color) => self.change_color(color),
+            Message::Echo(s) => self.echo(s),
+            Message::Move(p) => self.move_position(p),
+            Message::Quit => self.quit(),
+        }
+    }
+}
+
+```
+
+
+And then call it like
+
+```
+let mut state = State { quit: false, position: Point { x: 0, y: 0 }, color: (0, 0, 0), };
+    state.process(Message::ChangeColor((255, 0, 255)));
+    state.process(Message::Echo('hello world'));
+    state.process(Message::Move(Point { x: 10, y: 15 }));
+    state.process(Message::Quit);
+```
+
+
+## Options 
+
+```
+enum Option<T> {
+    Some: T,
+    None,
+}
+```
+
+```
+        if time_of_day < 22 {
+            return Option::Some(5);
+        } else if time_of_day == 22 {
+            return Option::Some(0);
+        } else {
+            return Option::None;
+        }
+```
+
+- is_some()  -> need to unwrap  "optional_target.unwrap()"
+- is_none()
+
+```
+    if optional_target.is_some() {
+        assert(optional_target.unwrap() == 'starklings', 'err1');
+    } else {
+        assert(optional_target.is_none(), 'err2');
+    }
+
+
+    if course.is_none() {
+        println!("No grade");
+    } else {
+        println!("grade is {}", course.unwrap());
+    }      
 ```
